@@ -1,5 +1,5 @@
 <h1> Aimmy v2.4.1 Orbeet Edition with Arduino Support</h1>
-<p>Fork of  <a href="[https://aimmy.dev/](https://github.com/Babyhamsta/Aimmy)" target="_blank"> More Features like Polygon Over Head ESP and sticky aim coming soon</p>
+<p>Fork of  <a href="[https://aimmy.dev/](https://github.com/Babyhamsta/Aimmy)" target="_blank">Aimmy V2.4.1 by BabyHamsta</a> More Features like Polygon Over Head ESP and sticky aim coming soon</p>
   <p>
     <a href="https://aimmy.dev/" target="_blank">
       <img width="100%" src="https://raw.githubusercontent.com/Babyhamsta/Aimmy/master/readme_assets/AimmyV2Banner.png"></a>
