@@ -1,4 +1,5 @@
-<h1> Aimmy v2.4.1 Orbeet Edition with Arduino Support</h1>h1>
+<h1> Aimmy v2.4.1 Orbeet Edition with Arduino Support</h1>
+<p>More Features like Polygon Over Head ESP and sticky aim coming soon</p>
 > [!NOTE]
 > If you enjoy Aimmy, please consider giving us a star ⭐! We appreciate it! :)
   <p>
