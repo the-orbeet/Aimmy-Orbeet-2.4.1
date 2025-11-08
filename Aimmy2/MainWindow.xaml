@@ -9,7 +9,7 @@
         xmlns:theme="clr-namespace:Aimmy2.Theme"
         theme:ThemeBehavior.AutoRegister="True"
         mc:Ignorable="d"
-        Title="Spotify"
+        Title="Aimmy2"
         Height="444"
         MinHeight="444"
         Width="670"

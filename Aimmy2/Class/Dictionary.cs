@@ -57,7 +57,7 @@ namespace Aimmy2.Class
             { "FOV", false },
             { "Dynamic FOV", false },
             { "Masking", false },
-            { "Show Detected Player", false },
+            { "Show a Box", false },
             { "Show AI Confidence", false },
             { "Show Tracers", false },
             { "Collect Data While Playing", false },

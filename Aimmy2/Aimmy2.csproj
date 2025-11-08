@@ -29,7 +29,7 @@
     <UseWindowsForms>false</UseWindowsForms>
     <Platforms>AnyCPU;x64</Platforms>	  <Product></Product>
 	  <Title></Title>
-	  <AssemblyName>Spotify</AssemblyName>
+	  <AssemblyName>CouldBeAimmyV2</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SignAssembly>False</SignAssembly>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -54,6 +54,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebugType>none</DebugType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\marker.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Resources\icon.ico" />
@@ -98,6 +102,7 @@
 		<Resource Include="Graphics\Fonts\Font Awesome 6 Free-Regular-400.otf" />
 		<Resource Include="Graphics\Fonts\Font Awesome 6 Free-Solid-900.otf" />
 		<Resource Include="Graphics\Fonts\Font Awesome 6 Brands-Regular-400.otf" />
+		<Resource Include="Resources\marker.png" />
 	</ItemGroup>
 
 	<ItemGroup>

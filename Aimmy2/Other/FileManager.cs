@@ -94,7 +94,7 @@ namespace Other
             Dictionary.lastLoadedModel = selectedModel;
 
             // Store original values and disable them temporarily
-            var toggleKeys = new[] { "Aim Assist", "Constant AI Tracking", "Auto Trigger", "Show Detected Player", "Show AI Confidence", "Show Tracers" };
+            var toggleKeys = new[] { "Aim Assist", "Constant AI Tracking", "Auto Trigger", "Show a Box", "Show AI Confidence", "Show Tracers" };
             var originalToggleStates = toggleKeys.ToDictionary(key => key, key => Dictionary.toggleState[key]);
             foreach (var key in toggleKeys)
             {

@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Visuality"
         mc:Ignorable="d"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -14,34 +13,77 @@
         ShowInTaskbar="False"
         Closing="Window_Closing"
         ResizeMode="NoResize"
-        IsTabStop="False">
-    <Grid>
+        IsTabStop="False"
+        UseLayoutRounding="True">
+
+    <Window.Resources>
+        <!-- Farbe des Markers – wird in .xaml.cs per UpdateDPColor() geändert -->
+        <SolidColorBrush x:Key="ESPFillBrush" Color="#FF00E5FF"/>
+    </Window.Resources>
+
+    <Grid Background="Transparent"
+          SnapsToDevicePixels="True"
+          RenderOptions.EdgeMode="Aliased">
+
+        <!-- Bildbasierter Marker -->
+        <Grid x:Name="DetectedPlayerHead"
+              Width="72" Height="52"
+              Visibility="Collapsed"
+              IsHitTestVisible="False"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Top"
+              Panel.ZIndex="9999"
+              ClipToBounds="False">
+
+            <!-- PNG wird als OpacityMask genutzt, Farbe kommt aus ESPFillBrush -->
+            <Rectangle x:Name="HeadMarker"
+                       Width="72" Height="52"
+                       Fill="{StaticResource ESPFillBrush}">
+                <Rectangle.OpacityMask>
+                    <!-- WICHTIG: Assembly-naher Pack-URI, KEIN Assemblyname -->
+                    <ImageBrush
+    ImageSource="pack://application:,,,/CouldBeAimmyV2;component/Resources/marker.png" 
+    Stretch="Uniform"/>
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </Grid>
+
+        <!-- Confidence -->
         <Label x:Name="DetectedPlayerConfidence"
                HorizontalAlignment="Left"
                VerticalAlignment="Top"
                FontFamily="Consolas"
-               Content="Confidence = 20%"
-               Padding="0,0,0,0"
+               Content=""
+               Padding="0"
                Opacity="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
                Foreground="#DDFF0000"
-               FontSize="20" />
+               FontSize="20"
+               IsHitTestVisible="False"
+               Panel.ZIndex="9998" />
+
+        <!-- ESP-Box -->
         <Border x:Name="DetectedPlayerFocus"
                 Width="50"
                 Height="50"
-                BorderThickness="1"
+                BorderThickness="2"
+                BorderBrush="#FFFF0000"
+                Background="#00FFFFFF"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Visibility="Visible"
-                Opacity="0" />
+                Visibility="Collapsed"
+                IsHitTestVisible="False"
+                Panel.ZIndex="9997"/>
+
+        <!-- Tracer -->
         <Line x:Name="DetectedTracers"
-              X1="0"
-              Y1="0"
-              X2="10"
-              Y2="10"
-              Stroke="Red"
-              Opacity="0">
-        </Line>
+              X1="0" Y1="0"
+              X2="0" Y2="0"
+              Stroke="#FFFF0000"
+              StrokeThickness="2"
+              Opacity="0"
+              IsHitTestVisible="False"
+              Panel.ZIndex="9996" />
     </Grid>
 </Window>

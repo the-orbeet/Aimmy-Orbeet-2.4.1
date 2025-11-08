@@ -1,6 +1,7 @@
 ﻿using Aimmy2.Class;
 using Aimmy2.UILibrary;
 using Class;
+using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -97,6 +98,20 @@ namespace Visuality
                 DetectedTracers.X1 = (DisplayManager.ScreenWidth / 2.0) / WinAPICaller.scalingFactorX;
                 DetectedTracers.Y1 = DisplayManager.ScreenHeight / WinAPICaller.scalingFactorY;
 
+                // NEU: Tracer-Ende = Start -> keine sichtbare Linie
+                DetectedTracers.X2 = DetectedTracers.X1;
+                DetectedTracers.Y2 = DetectedTracers.Y1;
+                DetectedTracers.Opacity = 0;
+
+                // NEU: Confidence-Label vollständig verstecken + Inhalt leeren
+                DetectedPlayerConfidence.Opacity = 0;
+                DetectedPlayerConfidence.Content = string.Empty;
+
+                // NEU: ESP-Box & Polygon sicher einklappen
+                DetectedPlayerFocus.Visibility = Visibility.Collapsed;
+                if (DetectedPlayerHead != null)
+                    DetectedPlayerHead.Visibility = Visibility.Collapsed;
+
                 // Force layout update
                 this.UpdateLayout();
 
@@ -105,13 +120,25 @@ namespace Visuality
             {
             }
         }
-
-        private void UpdateDPColor(Color NewColor)
+        private void UpdateDPColor(Color newColor)
         {
-            DetectedPlayerFocus.BorderBrush = new SolidColorBrush(NewColor);
-            DetectedPlayerConfidence.Foreground = new SolidColorBrush(NewColor);
-            DetectedTracers.Stroke = new SolidColorBrush(NewColor);
+            // zentrale Brush einfärben – alles, was diese Brush nutzt, ändert Farbe
+            if (Resources["ESPFillBrush"] is SolidColorBrush b)
+                b.Color = newColor;
+
+            // Bestehende Overlays mitziehen (optional)
+            var brush = new SolidColorBrush(newColor);
+            DetectedPlayerFocus.BorderBrush = brush;
+            DetectedPlayerConfidence.Foreground = brush;
+            DetectedTracers.Stroke = brush;
         }
+
+
+
+
+
+
+
 
         private void UpdateDPFontSize(int newint) => DetectedPlayerConfidence.FontSize = newint;
 
@@ -121,9 +148,19 @@ namespace Visuality
         {
             DetectedPlayerFocus.BorderThickness = new Thickness(newdouble);
             DetectedTracers.StrokeThickness = newdouble;
+
+
         }
 
-        private void ChangeOpacity(double newdouble) => DetectedPlayerFocus.Opacity = newdouble;
+
+        private void ChangeOpacity(double newdouble)
+        {
+            DetectedPlayerFocus.Opacity = newdouble;
+            DetectedPlayerHead.Opacity = newdouble;       // der Container mit dem Bild
+            DetectedPlayerConfidence.Opacity = newdouble; // optional
+            DetectedTracers.Opacity = newdouble;          // optional
+        }
+
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -135,6 +172,14 @@ namespace Visuality
         protected override void OnClosed(EventArgs e)
         {
             DisplayManager.DisplayChanged -= OnDisplayChanged;
+
+            // Delegates abklemmen, damit nach dem Close keine Calls mehr hier landen
+            PropertyChanger.ReceiveDPColor = null;
+            PropertyChanger.ReceiveDPFontSize = null;
+            PropertyChanger.ReceiveDPWCornerRadius = null;
+            PropertyChanger.ReceiveDPWBorderThickness = null;
+            PropertyChanger.ReceiveDPWOpacity = null;
+
             base.OnClosed(e);
         }
     }

@@ -32,6 +32,7 @@ namespace AILogic
         }
     }
 
+
     internal class WiseTheFoxPrediction
     {
         /// <summary>

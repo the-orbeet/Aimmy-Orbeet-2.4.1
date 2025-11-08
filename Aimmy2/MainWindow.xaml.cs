@@ -310,6 +310,16 @@ namespace Aimmy2
                     action(Convert.ToDouble(Dictionary.sliderSettings[key]));
                 }
             }
+            // Defaults for new Polygon-ESP settings
+            if (!Dictionary.sliderSettings.ContainsKey("ESP Smooth Factor"))
+                Dictionary.sliderSettings["ESP Smooth Factor"] = 0.5;
+
+            if (!Dictionary.sliderSettings.ContainsKey("ESP Snap Threshold"))
+                Dictionary.sliderSettings["ESP Snap Threshold"] = 15.0;
+
+            if (!Dictionary.toggleState.ContainsKey("Show Head Marker"))
+                Dictionary.toggleState["Show Head Marker"] = false;
+
         }
 
         private void UpdateAboutSpecs()
@@ -420,7 +430,7 @@ namespace Aimmy2
 
         private void DisableAllFeatures()
         {
-            var features = new[] { "Aim Assist", "FOV", "Show Detected Player" };
+            var features = new[] { "Aim Assist", "FOV", "Show a Box" };
             foreach (var feature in features)
             {
                 Dictionary.toggleState[feature] = false;
@@ -608,22 +618,22 @@ namespace Aimmy2
                         FOVWindow.ForceReposition();
                     }
                 },
-                ["Show Detected Player"] = () =>
+                ["Show a Box"] = () =>
                 {
                     ShowHideDPWindow();
-                    DPWindow.DetectedPlayerFocus.Visibility = GetToggleVisibility(title, true);
-                    // Force reposition when showing the window
-                    if (Dictionary.toggleState[title])
-                    {
-                        DPWindow.ForceReposition();
-                    }
+                    // DPWindow.DetectedPlayerFocus.Visibility = GetToggleVisibility(title, true); // <--- ENTFERNT
                 },
-                ["Show AI Confidence"] = () => DPWindow.DetectedPlayerConfidence.Visibility = GetToggleVisibility(title, true),
+                ["Show AI Confidence"] = () => DPWindow.DetectedPlayerConfidence.Visibility = GetToggleVisibility(title, true), // Dies ist OK
                 ["Mouse Background Effect"] = () => { if (!Dictionary.toggleState[title]) RotaryGradient.Angle = 0; },
                 ["UI TopMost"] = () => Topmost = Dictionary.toggleState[title],
                 ["EMA Smoothening"] = () =>
                 {
                     MouseManager.IsEMASmoothingEnabled = Dictionary.toggleState[title];
+                },
+                ["Show Head Marker"] = () =>
+                {
+                    ShowHideDPWindow();
+                    // DPWindow.DetectedPlayerHead.Visibility = GetToggleVisibility(title, true); // <--- ENTFERNT
                 }
             };
 
@@ -638,12 +648,16 @@ namespace Aimmy2
                 ? Visibility.Visible
                 : (collapsed ? Visibility.Collapsed : Visibility.Hidden);
 
-        private static void ShowHideDPWindow()
+        internal static void ShowHideDPWindow()
+
         {
-            if (Dictionary.toggleState["Show Detected Player"])
+            bool needVisible =
+                Dictionary.toggleState.GetValueOrDefault("Show a Box") ||
+                Dictionary.toggleState.GetValueOrDefault("Show Head Marker"); // <— NEU
+
+            if (needVisible)
             {
                 DPWindow.Show();
-                // Force reposition when showing
                 DPWindow.ForceReposition();
             }
             else
@@ -651,6 +665,8 @@ namespace Aimmy2
                 DPWindow.Hide();
             }
         }
+
+
 
         #endregion
 

@@ -205,14 +205,14 @@ namespace Aimmy2.Controls
                     uiManager.AT_AimConfig = t;
                     t.Minimize.Click += (s, e) => TogglePanel("Aim Config", AimConfigPanel);
                 })
-                .AddDropdown("Prediction Method", d =>
-                {
-                    d.DropdownBox.SelectedIndex = -1;
-                    uiManager.D_PredictionMethod = d;
-                    _mainWindow.AddDropdownItem(d, "Kalman Filter");
-                    _mainWindow.AddDropdownItem(d, "Shall0e's Prediction");
-                    _mainWindow.AddDropdownItem(d, "wisethef0x's EMA Prediction");
-                })
+.AddDropdown("Prediction Method", d =>
+{
+    d.DropdownBox.SelectedIndex = -1;
+    uiManager.D_PredictionMethod = d;
+    _mainWindow.AddDropdownItem(d, "Kalman Filter");
+    _mainWindow.AddDropdownItem(d, "Shall0e's Prediction");
+    _mainWindow.AddDropdownItem(d, "wisethef0x's EMA Prediction");
+})
                 .AddDropdown("Detection Area Type", d =>
                 {
                     d.DropdownBox.SelectedIndex = -1;
@@ -410,15 +410,85 @@ namespace Aimmy2.Controls
             var uiManager = _mainWindow!.uiManager;
             var builder = new SectionBuilder(this, ESPConfig);
 
+            // Lokale Referenzen auf die beiden Toggles, damit wir UI-States sauber updaten können
+            AToggle? boxToggleRef = null;
+            AToggle? polyToggleRef = null;
+
             builder
                 .AddTitle("ESP Config", true, t =>
                 {
                     uiManager.AT_DetectedPlayer = t;
                     t.Minimize.Click += (s, e) => TogglePanel("ESP Config", ESPConfigPanel);
                 })
-                .AddToggle("Show Detected Player", t => uiManager.T_ShowDetectedPlayer = t)
-                .AddToggle("Show AI Confidence", t => uiManager.T_ShowAIConfidence = t)
-                .AddToggle("Show Tracers", t => uiManager.T_ShowTracers = t)
+                .AddToggle("Show a Box", t =>
+                {
+                    boxToggleRef = t;
+                    uiManager.T_ShowDetectedPlayer = t;
+
+                    // Default setzen (falls nicht vorhanden)
+                    if (!Dictionary.toggleState.ContainsKey("Show a Box"))
+                        Dictionary.toggleState["Show a Box"] = false;
+
+                    // Wenn Box aktiviert wird und Polygon an ist -> Polygon ausschalten
+                    t.Reader.Click += (s, e) =>
+                    {
+                        var sdp = Dictionary.toggleState.GetValueOrDefault("Show a Box");
+                        var shp = Dictionary.toggleState.GetValueOrDefault("Show Head Marker");
+
+                        if (sdp && shp)
+                        {
+                            Dictionary.toggleState["Show Head Marker"] = false;
+
+                            if (polyToggleRef != null)
+                                _mainWindow!.UpdateToggleUI(polyToggleRef, false);
+                            else if (_mainWindow!.toggleInstances.TryGetValue("Show Head Marker", out var polyToggle))
+                                _mainWindow.UpdateToggleUI(polyToggle, false);
+                        }
+
+                        // Overlay-Fenster-Sichtbarkeit aktualisieren
+                        MainWindow.ShowHideDPWindow();
+                    };
+                })
+.AddToggle("Show Head Marker", t =>
+{
+    polyToggleRef = t; // Merken, damit wir oben zurückschalten können
+
+    // Default setzen (falls nicht vorhanden)
+    if (!Dictionary.toggleState.ContainsKey("Show Head Marker"))
+        Dictionary.toggleState["Show Head Marker"] = false;
+
+    // Entkopplung: Wird Polygon aktiviert und Box ist an -> Box ausschalten
+    t.Reader.Click += (s, e) =>
+    {
+        var shp = Dictionary.toggleState.GetValueOrDefault("Show Head Marker");
+        var sdp = Dictionary.toggleState.GetValueOrDefault("Show a Box");
+
+        if (shp && sdp)
+        {
+            Dictionary.toggleState["Show a Box"] = false;
+
+            if (boxToggleRef != null)
+                _mainWindow!.UpdateToggleUI(boxToggleRef, false);
+            else if (_mainWindow!.toggleInstances.TryGetValue("Show a Box", out var boxToggle))
+                _mainWindow.UpdateToggleUI(boxToggle, false);
+        }
+
+        // Overlay-Fenster-Sichtbarkeit aktualisieren
+        MainWindow.ShowHideDPWindow();
+    };
+})
+                .AddToggle("Show AI Confidence", t =>
+                {
+                    uiManager.T_ShowAIConfidence = t;
+                    if (!Dictionary.toggleState.ContainsKey("Show AI Confidence"))
+                        Dictionary.toggleState["Show AI Confidence"] = false;
+                })
+                .AddToggle("Show Tracers", t =>
+                {
+                    uiManager.T_ShowTracers = t;
+                    if (!Dictionary.toggleState.ContainsKey("Show Tracers"))
+                        Dictionary.toggleState["Show Tracers"] = false;
+                })
                 .AddColorChanger("Detected Player Color", c =>
                 {
                     uiManager.CC_DetectedPlayerColor = c;
@@ -444,12 +514,15 @@ namespace Aimmy2.Controls
                     uiManager.S_DPOpacity = s;
                     s.Slider.ValueChanged += (sender, e) => PropertyChanger.PostDPWOpacity(s.Slider.Value);
                 })
+
                 .AddSeparator();
         }
 
+
+
         #endregion
 
-        #region Helper Methods
+            #region Helper Methods
 
         private void HandleColorChange(AColorChanger colorChanger, string settingKey, Action<Color> updateAction)
         {
@@ -571,8 +644,15 @@ namespace Aimmy2.Controls
             var toggle = new AToggle(title);
             _mainWindow!.toggleInstances[title] = toggle;
 
+            // --- FIX: Standardwert setzen, BEVOR er gelesen wird ---
+            if (!Dictionary.toggleState.ContainsKey(title))
+            {
+                Dictionary.toggleState[title] = false;
+            }
+            // --- ENDE FIX ---
+
             // Set initial state
-            if (Dictionary.toggleState[title])
+            if (Dictionary.toggleState[title]) // Diese Zeile ist jetzt sicher
                 toggle.EnableSwitch();
             else
                 toggle.DisableSwitch();
