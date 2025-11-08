@@ -1,5 +1,7 @@
 <h1> Aimmy v2.4.1 Orbeet Edition with Arduino Support</h1>
-<p>Fork of  <a href="https://github.com/Babyhamsta/Aimmy" target="_blank">Aimmy V2.4.1 by BabyHamsta</a> just with Arduino Support and Auto Com Port Detection (multilingual). More cool features like a "Polygon Over Head ESP" and sticky aim coming soon</p>
+<p>Fork of  <a href="https://github.com/Babyhamsta/Aimmy" target="_blank">Aimmy V2.4.1 by BabyHamsta</a> just with some cool Features like Arduino Support and Auto Com Port Detection (multilingual) and a ESP Head Marker, more Features in work.</p>
+<h2>Changelog</h2>
+<p>08.11.2025 - Added ESP Head Marker</p>
   <p>
     <a href="https://aimmy.dev/" target="_blank">
       <img width="100%" src="https://raw.githubusercontent.com/Babyhamsta/Aimmy/master/readme_assets/AimmyV2Banner.png"></a>
